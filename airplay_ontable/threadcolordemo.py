@@ -8,7 +8,7 @@ import socket
 import time
 import numpy as np
 import json
-import threaddemo
+#import threaddemo
 from functions import *
 import logging
 import PySpin
@@ -47,21 +47,25 @@ def threadVideoGet():
 
         # localize 2 points
         if not Islocalized:
+            cv.imshow("frame",frame)
             localresult = LocationOfCorners(frame)
-            if localresult == 0:
-                continue
-            else:
+            
+            if localresult != 0:
+                Islocalized = True
                 #TO DO: give unity a specific number so that unity know we finish the localization and close the tags
                 ##############
                 sock.sendto("finish".encode(), (UDP_IP, UDP_PORT))
                 ##############
                 UpPoint, DownPoint, Islocalized = localresult[0], localresult[1],localresult[2] # choose tag25 as the up point, tag36 as the down point 
+            else:
+                continue
         #cv.circle(frame, UpPoint, 6,(255,0,0), 5)  # debug for center localization
         #cv.circle(frame, DownPoint, 6,(255,0,0), 5)       
         #color detection
+        
         hsv_frame = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
 
-        # Green color
+         #Green color
         #low_green = np.array([25, 52, 72])
         #high_green = np.array([102, 255, 255])
         #fgMask = cv.inRange(hsv_frame, low_green, high_green)
@@ -70,8 +74,8 @@ def threadVideoGet():
         
 
         # Blue color
-        #low_blue = np.array([233, 36, 81])
-        #high_blue = np.array([126, 255, 255])
+        low_blue = np.array([233, 36, 81])
+        high_blue = np.array([126, 255, 255])
         #reading the trackbar values for thresholds
         min_blue = cv.getTrackbarPos('min_blue', 'Track Bars')
         min_green = cv.getTrackbarPos('min_green', 'Track Bars')
@@ -82,6 +86,7 @@ def threadVideoGet():
         max_red = cv.getTrackbarPos('max_red', 'Track Bars')
 
         fgMask = cv.inRange(hsv_frame, np.array([min_blue, min_green, min_red]), np.array([max_blue, max_green, max_red]))
+        #fgMask = cv.inRange(hsv_frame, low_blue, high_blue)
 
    
     
@@ -107,7 +112,7 @@ def threadVideoGet():
             if(M['m00']!= 0):       
             
             
-                if (cv.contourArea(cnt) > 500):
+                if (cv.contourArea(cnt) > 5):
                     #find and draw min circle
                     #(cx,cy),radius = cv.minEnclosingCircle(cnt)
                     #center = (int(cx),int(cy))
