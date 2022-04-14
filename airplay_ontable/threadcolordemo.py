@@ -53,7 +53,7 @@ def threadVideoGet():
             else:
                 #TO DO: give unity a specific number so that unity know we finish the localization and close the tags
                 ##############
-
+                sock.sendto("finish".encode(), (UDP_IP, UDP_PORT))
                 ##############
                 UpPoint, DownPoint, Islocalized = localresult[0], localresult[1],localresult[2] # choose tag25 as the up point, tag36 as the down point 
         #cv.circle(frame, UpPoint, 6,(255,0,0), 5)  # debug for center localization
@@ -126,13 +126,17 @@ def threadVideoGet():
                     
                     (cx,cy),radius = cv.minEnclosingCircle(cnt)
                     detectcenter = (int(cx),int(cy))
+                    x,y = Playpos(UpPoint, DownPoint,detectcenter)
+                    m['nums'] = n
+                    m['x'+str(n)] = x
+                    m['y'+str(n)] = y
                     
                    
                     
         print(m)
         data = json.dumps(m)
         sock.sendto(data.encode(), (UDP_IP, UDP_PORT) )
-
+        
 
         cv.imshow("fgMask", fgMask)
         cv.imshow("Green", frame)

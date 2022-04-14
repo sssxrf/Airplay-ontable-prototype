@@ -53,6 +53,7 @@ def Playpos(pointup, pointdown, detectpoint):
     else:
         k = deltaUD[1] / deltaUD[0]
         b = PD[1] - k * PD[0]
+
     # foot point (intersection point of l1, l2: detectpoint)
     foot_x = (Px/k + Py - b) / (k + 1/k)
     foot_y = k * foot_x + b
@@ -64,4 +65,6 @@ def Playpos(pointup, pointdown, detectpoint):
 
     # detectpoint on which side?
     if k * Px + b > Py:   #left side
-        pass
+        return -1,-1
+    else:
+        return x_dis,y_dis
