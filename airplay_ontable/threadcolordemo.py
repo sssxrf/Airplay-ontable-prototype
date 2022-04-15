@@ -25,14 +25,14 @@ def threadVideoGet():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     # Track bar
-    cv.namedWindow('Track Bars', cv.WINDOW_NORMAL)
-    cv.createTrackbar('min_blue', 'Track Bars', 0, 255, doNothing)
-    cv.createTrackbar('min_green', 'Track Bars', 0, 255, doNothing)
-    cv.createTrackbar('min_red', 'Track Bars', 0, 255, doNothing)
+    #cv.namedWindow('Track Bars', cv.WINDOW_NORMAL)
+    #cv.createTrackbar('min_blue', 'Track Bars', 0, 255, doNothing)
+    #cv.createTrackbar('min_green', 'Track Bars', 0, 255, doNothing)
+    #cv.createTrackbar('min_red', 'Track Bars', 0, 255, doNothing)
 
-    cv.createTrackbar('max_blue', 'Track Bars', 0, 255, doNothing)
-    cv.createTrackbar('max_green', 'Track Bars', 0, 255, doNothing)
-    cv.createTrackbar('max_red', 'Track Bars', 0, 255, doNothing)
+    #cv.createTrackbar('max_blue', 'Track Bars', 0, 255, doNothing)
+    #cv.createTrackbar('max_green', 'Track Bars', 0, 255, doNothing)
+    #cv.createTrackbar('max_red', 'Track Bars', 0, 255, doNothing)
 
     video_getter = VideoGetColor().start()
 
@@ -53,7 +53,7 @@ def threadVideoGet():
             else:
                 #TO DO: give unity a specific number so that unity know we finish the localization and close the tags
                 ##############
-
+                sock.sendto("finish".encode(), (UDP_IP, UDP_PORT))
                 ##############
                 UpPoint, DownPoint, Islocalized = localresult[0], localresult[1],localresult[2] # choose tag25 as the up point, tag36 as the down point 
         #cv.circle(frame, UpPoint, 6,(255,0,0), 5)  # debug for center localization
@@ -70,17 +70,24 @@ def threadVideoGet():
         
 
         # Blue color
-        #low_blue = np.array([233, 36, 81])
-        #high_blue = np.array([126, 255, 255])
-        #reading the trackbar values for thresholds
-        min_blue = cv.getTrackbarPos('min_blue', 'Track Bars')
-        min_green = cv.getTrackbarPos('min_green', 'Track Bars')
-        min_red = cv.getTrackbarPos('min_red', 'Track Bars')
+        min_blue = 104
+        min_green = 194
+        min_red = 73
     
-        max_blue = cv.getTrackbarPos('max_blue', 'Track Bars')
-        max_green = cv.getTrackbarPos('max_green', 'Track Bars')
-        max_red = cv.getTrackbarPos('max_red', 'Track Bars')
+        max_blue = 170
+        max_green = 255
+        max_red = 255
 
+        #reading the trackbar values for thresholds
+        #min_blue = cv.getTrackbarPos('min_blue', 'Track Bars')
+        #min_green = cv.getTrackbarPos('min_green', 'Track Bars')
+        #min_red = cv.getTrackbarPos('min_red', 'Track Bars')
+    
+        #max_blue = cv.getTrackbarPos('max_blue', 'Track Bars')
+        #max_green = cv.getTrackbarPos('max_green', 'Track Bars')
+        #max_red = cv.getTrackbarPos('max_red', 'Track Bars')
+
+        
         fgMask = cv.inRange(hsv_frame, np.array([min_blue, min_green, min_red]), np.array([max_blue, max_green, max_red]))
 
    
@@ -126,6 +133,13 @@ def threadVideoGet():
                     
                     (cx,cy),radius = cv.minEnclosingCircle(cnt)
                     detectcenter = (int(cx),int(cy))
+                    cv.circle(fgMask,detectcenter,int(radius) + 10 ,color =(255,0,0),thickness=10)
+                    x,y = Playpos(UpPoint, DownPoint,detectcenter)
+                    m['nums'] = n
+                    m['x'+str(n)] = x
+                    m['y'+str(n)] = y
+                    
+                    n = n + 1
                     
                    
                     

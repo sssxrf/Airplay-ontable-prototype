@@ -48,20 +48,56 @@ def Playpos(pointup, pointdown, detectpoint):
     # l1: PU PD
     deltaUD = PU - PD
     if deltaUD[0] == 0:
-        x = Px - PU[0]
-        y = PD[0] - Py
+        # don't need to judge side, negative represents left, down
+        x_dis = Px - PU[0]
+        y_dis = PD[0] - Py
     else:
         k = deltaUD[1] / deltaUD[0]
         b = PD[1] - k * PD[0]
-    # foot point (intersection point of l1, l2: detectpoint)
-    foot_x = (Px/k + Py - b) / (k + 1/k)
-    foot_y = k * foot_x + b
-    foot = np.array([foot_x, foot_y])
+        # foot point (intersection point of l1, l2: detectpoint)
+        foot_x = (Px/k + Py - b) / (k + 1/k)
+        foot_y = k * foot_x + b
+        foot = np.array([foot_x, foot_y])
     
-    # distance: foot point to pointdown ; foot point to detectpoint
-    x_dis = np.linalg.norm(detectP - foot)
-    y_dis = np.linalg.norm(foot - PD)
+        # distance: foot point to pointdown ; foot point to detectpoint
+        x_dis = np.linalg.norm(detectP - foot)
+        y_dis = np.linalg.norm(foot - PD)
 
-    # detectpoint on which side?
-    if k * Px + b > Py:   #left side
-        pass
+
+        # l2: PD and perpendicular to l1
+        k1 = -1 / k
+        b1 = PD[0] / k + PD[1]
+
+        # detectpoint on which side, 4 situation when we choose pointdown as the origin
+        if k > 0:
+            if k * Px + b <= Py:   #left side
+                if k1 * Px + b1 >= Py: # up side
+                    x_dis = -x_dis
+                else:             #left down side   
+                    x_dis = -x_dis    
+                    y_dis = -y_dis
+        
+            if k * Px + b > Py:   #right side
+                if k1 * Px + b1 < Py: # down side
+                    y_dis = -y_dis
+                # right up do nothing
+
+        if k < 0:
+            if k * Px + b >= Py:   #left side
+                if k1 * Px + b1 >= Py: # up side
+                    x_dis = -x_dis
+                else:             #left down side   
+                    x_dis = -x_dis    
+                    y_dis = -y_dis
+        
+            if k * Px + b < Py:   #right side
+                if k1 * Px + b1 < Py: # down side
+                    y_dis = -y_dis
+                # right up do nothing
+     
+    # normlize: calculate the relative distance by distance of two tags
+    tag_dis = np.linalg.norm(deltaUD)
+    x = x_dis / tag_dis
+    y = y_dis / tag_dis
+
+    return x, y 
