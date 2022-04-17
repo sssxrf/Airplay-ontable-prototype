@@ -56,8 +56,8 @@ def threadVideoGet():
                 sock.sendto("finish".encode(), (UDP_IP, UDP_PORT))
                 ##############
                 UpPoint, DownPoint, Islocalized = localresult[0], localresult[1],localresult[2] # choose tag25 as the up point, tag36 as the down point 
-        #cv.circle(frame, UpPoint, 6,(255,0,0), 5)  # debug for center localization
-        #cv.circle(frame, DownPoint, 6,(255,0,0), 5)       
+        cv.circle(frame, UpPoint, 6,(255,0,0), 5)  # debug for center localization
+        cv.circle(frame, DownPoint, 6,(255,0,0), 5)       
         #color detection
         hsv_frame = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
 
@@ -70,13 +70,13 @@ def threadVideoGet():
         
 
         # Blue color
-        min_blue = 104
-        min_green = 194
-        min_red = 73
+        min_blue = 94
+        min_green = 95
+        min_red = 102
     
-        max_blue = 170
+        max_blue = 132
         max_green = 255
-        max_red = 255
+        max_red = 246
 
         #reading the trackbar values for thresholds
         #min_blue = cv.getTrackbarPos('min_blue', 'Track Bars')
@@ -93,8 +93,8 @@ def threadVideoGet():
    
     
         #cv.rectangle(frame, (10, 2), (100,20), (255,255,255), -1)
-        fgMask = cv.resize(fgMask,(960,540))
-        frame = cv.resize(frame,(960,540))
+        #fgMask = cv.resize(fgMask,(960,540))
+        #frame = cv.resize(frame,(960,540))
 
         #erosion and dilation
         #fgMask = cv.erode(fgMask, np.ones((7,7), np.uint8)) 
