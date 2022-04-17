@@ -9,14 +9,15 @@ import cv2 as cv
 
 import numpy as np
 import sys
-
+tag25_detector = apriltag.Detector(families='tag25h9') #for tag25h9
+tag36_detector = apriltag.Detector(families='tag36h11') #for tag36h11
 
 def LocationOfCorners(img):
 
     #img =cv.imread("tags.png")
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     #at_detector = apriltag.Detector(apriltag.DetectorOptions(families='tag36h11 tag25h9') )#for linux
-    tag25_detector = apriltag.Detector(families='tag25h9') #for tag25h9
+    
     tag25 = tag25_detector.detect(gray)
     if len(tag25) == 0:
         return 0
@@ -24,7 +25,7 @@ def LocationOfCorners(img):
         center25 = tuple(tag25[0].center.astype(int))
     #cv.circle(img, tuple(tag25[0].center.astype(int)), 4,(255,0,0), 2) # draw center for debug
 
-    tag36_detector = apriltag.Detector(families='tag36h11') #for tag36h11
+    
     tag36 = tag36_detector.detect(gray)
     if len(tag36) == 0:
         return 0
