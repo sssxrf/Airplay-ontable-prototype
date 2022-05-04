@@ -1,2 +1,0 @@
-# Airplay Ontable Prototype
-
